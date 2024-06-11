@@ -106,7 +106,20 @@ class LoginController extends Controller
             return redirect()->to($request->get('to'));
         }
 
-        return redirect()->intended();
+       // return redirect()->intended();
+	   
+	    // redirection based on user profile: User, Admin, Superuser, owner
+		if ($user->hasRole('Template')) {
+            return redirect()->to("userarea/index.php"); }
+        if ($user->hasRole('Admin')) {
+            return redirect()->to("userarea/index.php"); }
+		if ($user->hasRole('User')) {
+            return redirect()->to("userarea/index.php"); }
+        if ($user->hasRole('Superuser')) {
+            return redirect()->to("userarea/index.php"); }
+        if ($user->hasRole('Quality')) {
+            return redirect()->to("userarea/index.php"); }
+	   
     }
 
     /**

@@ -123,7 +123,7 @@ $conn->close();
 					<div class="dropdown-item noti-title">
 						<h5>Welcome</h5>
 					</div>
-					<a class="dropdown-item" href="#"><i class="mdi mdi-account-circle m-r-5 text-muted"></i> <?php echo $userprofile; ?></a>
+					<a class="dropdown-item" href="<?php echo BASE_URL; ?>profile"><i class="mdi mdi-account-circle m-r-5 text-muted"></i> <?php echo $userprofile; ?></a>
 					<a class="dropdown-item" href="#"><i class="mdi mdi-wallet m-r-5 text-muted"></i> <?php echo $mycompany; ?></a>
 
 					<div class="dropdown-divider"></div>
