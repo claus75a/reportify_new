@@ -154,6 +154,12 @@
 
 
                                                             <td>
+                                                                <a href="runimport.php?idimporttemplates=<?php echo ($templateimportify->getColumnVal("idimporttemplates")); ?>">
+                                                                    <button type="button" class="btn btn-danger waves-effect waves-light" data-toggle="tooltip" title="Run Import">
+                                                                        <i class="fas fa-play font-size-16 align-middle"></i>
+                                                                    </button>
+                                                                </a>
+
                                                                 <a href="columnlink.php?idimporttemplates=<?php echo ($templateimportify->getColumnVal("idimporttemplates")); ?>">
                                                                     <button type="button" class="btn btn-info waves-effect waves-light" data-toggle="tooltip" title="Associate Columns">
                                                                         <i class="fas fa-project-diagram font-size-16 align-middle"></i>
