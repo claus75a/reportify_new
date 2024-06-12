@@ -113,7 +113,7 @@
                                         <h5 class="header-title pb-3 mt-0">Importify: <?php echo $dashboard; ?></h5>
                                         <a class="btn btn-primary" href="insert-importifytemplate.php" role="button">Insert new template</a>
                                         <a class="btn btn-success" href="rsl-category.php" role="button">Import File</a>
-                                        <a href=""><button type="button" class="btn btn-info w-md waves-effect waves-light">Hystory Import</button></a>
+                                        <a href="archiveimport.php"><button type="button" class="btn btn-info w-md waves-effect waves-light">Hystory Import</button></a>
                                         <a href="importifydashboard.php"><button type="button" class="btn btn-pink w-md waves-effect waves-light">Importify Dasboard</button></a>
                                         <a href="dashboard.php"><button type="button" class="btn btn-danger w-md waves-effect waves-light">Reportify Dasboard</button></a>
 
@@ -154,6 +154,12 @@
 
 
                                                             <td>
+                                                                <a href="runimport.php?idimporttemplates=<?php echo ($templateimportify->getColumnVal("idimporttemplates")); ?>">
+                                                                    <button type="button" class="btn btn-danger waves-effect waves-light" data-toggle="tooltip" title="Run Import">
+                                                                        <i class="fas fa-play font-size-16 align-middle"></i>
+                                                                    </button>
+                                                                </a>
+
                                                                 <a href="columnlink.php?idimporttemplates=<?php echo ($templateimportify->getColumnVal("idimporttemplates")); ?>">
                                                                     <button type="button" class="btn btn-info waves-effect waves-light" data-toggle="tooltip" title="Associate Columns">
                                                                         <i class="fas fa-project-diagram font-size-16 align-middle"></i>
