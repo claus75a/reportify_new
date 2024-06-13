@@ -4,8 +4,8 @@
 # HTTP="true"
 $hostname_repnew = "localhost";
 $database_repnew = "reportifynew";
-$username_repnew = "solocla";
-$password_repnew = "!Massarosa2";
+$username_repnew = "root";
+$password_repnew = "";
 
 $servername = $hostname_repnew;
 $username = $username_repnew;

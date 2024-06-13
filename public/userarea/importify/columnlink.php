@@ -348,6 +348,7 @@
                         }
                     }
                     $('#div_rdo_csv').html(str_arr_title);
+                    $('#tbody_result').html("");
                 }
             }
         })
