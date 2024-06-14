@@ -84,7 +84,7 @@ if(isset($_FILES['f_csv'])) {
                         $arr_product_need_idx = array();
                         for($i=0; $i<count($arr_associate); $i++) {
                             if($arr_associate[$i]['table_name'] == "products") {
-                                array_push($arr_product_need_idx, array($arr_associate[$i]['column_name'], $i));
+                                array_push($arr_product_need_idx, array($arr_associate[$i]['column_name'], array_search($arr_associate[$i]['headerfile'], $arr_excel_columns)));
                             }
                         }
 
@@ -155,7 +155,7 @@ if(isset($_FILES['f_csv'])) {
                             $arr_report_need_idx = array();
                             for ($i = 0; $i < count($arr_associate); $i++) {
                                 if ($arr_associate[$i]['table_name'] == "reports") {
-                                    array_push($arr_report_need_idx, array($arr_associate[$i]['column_name'], $i));
+                                    array_push($arr_report_need_idx, array($arr_associate[$i]['column_name'], array_search($arr_associate[$i]['headerfile'], $arr_excel_columns)));
                                 }
                             }
 
@@ -226,7 +226,7 @@ if(isset($_FILES['f_csv'])) {
                                 $arr_part_need_idx = array();
                                 for ($i = 0; $i < count($arr_associate); $i++) {
                                     if ($arr_associate[$i]['table_name'] == "parts") {
-                                        array_push($arr_part_need_idx, array($arr_associate[$i]['column_name'], $i));
+                                        array_push($arr_part_need_idx, array($arr_associate[$i]['column_name'], array_search($arr_associate[$i]['headerfile'], $arr_excel_columns)));
                                     }
                                 }
 
@@ -265,7 +265,7 @@ if(isset($_FILES['f_csv'])) {
                                 $arr_result_project_need_idx = array();
                                 for ($i = 0; $i < count($arr_associate); $i++) {
                                     if ($arr_associate[$i]['table_name'] == "result_project") {
-                                        array_push($arr_result_project_need_idx, array($arr_associate[$i]['column_name'], $i));
+                                        array_push($arr_result_project_need_idx, array($arr_associate[$i]['column_name'], array_search($arr_associate[$i]['headerfile'], $arr_excel_columns)));
                                     }
                                 }
 
