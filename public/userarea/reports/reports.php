@@ -152,7 +152,8 @@
                                                             <td><?php echo ($reportslist->getColumnVal("reportsNumberLab")); ?></td>
                                                             <td><?php echo ($reportslist->getColumnVal("lab")); ?></td>
                                                             <td><?php echo ($reportslist->getColumnVal("products_refnumber")); ?></td>
-                                                            <td><?php echo ($reportslist->getColumnVal("products_description")); ?></td>
+                                                            <td><?php echo substr($reportslist->getColumnVal("products_description"), 0, 50); ?></td>
+
                                                             <td><?php echo ($reportslist->getColumnVal("reportsDateOut")); ?></td>
                                                             <td><?php echo ($reportslist->getColumnVal("reportsRating")); ?></td>
 

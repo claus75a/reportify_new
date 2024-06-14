@@ -9,3 +9,32 @@ function getWithoutSpaceStr(str) {
 function showWarningAlert(str) {
     alertify.logPosition("top right").error("<i class='ion-alert-circled'><i> " + str + "");
 }
+
+function showWarningPopup(str, callback = null, confirm_str = "Confirm") {
+    Swal.fire({
+        title: 'Warning!',
+        text: str,
+        icon: 'warning',
+        showCancelButton: false,
+        confirmButtonColor: '#d33',
+        confirmButtonText: 'Confirm',
+    }).then((result) => {
+        if(callback) {
+            callback();
+        }
+    });
+}
+
+function showSuccessPopup(str, callback = null) {
+    Swal.fire({
+        title: 'Success',
+        text: str,
+        icon: 'success',
+        showCancelButton: false,
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Confirm'
+    }).then((result) => {
+        if(callback)
+            callback();
+    });
+}

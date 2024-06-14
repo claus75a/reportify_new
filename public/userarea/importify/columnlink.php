@@ -326,6 +326,7 @@
             contentType: false,
             beforeSend: function() {
                 $('#ajax_preloader').fadeIn();
+                $('#f_csv').val("");
             },
             error: function() {
                 $('#ajax_preloader').fadeOut();
@@ -438,19 +439,8 @@
                 success: function(data) {
                     $('#ajax_preloader').fadeOut();
                     console.log(data);
-                    Swal.fire({
-                        title: 'Success',
-                        text: "Your operation successed!",
-                        icon: 'success',
-                        showCancelButton: false,
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Confirm'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            history.go(-1);
-                        } else {
-                            history.go(-1);
-                        }
+                    showSuccessPopup("Your operation succeeded!", function() {
+                        history.go(-1);
                     });
                 }
             })
@@ -494,7 +484,7 @@
     //                 console.log(data);
     //                 Swal.fire({
     //                     title: 'Success',
-    //                     text: "Your operation successed!",
+    //                     text: "Your operation succeeded!",
     //                     icon: 'success',
     //                     showCancelButton: false,
     //                     confirmButtonColor: '#3085d6',

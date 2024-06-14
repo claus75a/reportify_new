@@ -7,7 +7,7 @@ $arr_selected_csv = json_decode($_POST['arr_selected_csv']);
 $arr_selected_tbl_title = json_decode($_POST['arr_selected_tbl_title']);
 $arr_selected_tbl_name = json_decode($_POST['arr_selected_tbl_name']);
 $arr_db_headerfile = json_decode($_POST['arr_db_headerfile']);
-
+ini_set('memory_limit', '128M');
 $deleteQuery = new WA_MySQLi_Query($repnew);
 $deleteQuery->Action = "delete";
 $deleteQuery->Table = "`template_associate`";

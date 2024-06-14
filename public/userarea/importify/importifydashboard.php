@@ -20,10 +20,22 @@
     <link href="https://cdn.jsdelivr.net/npm/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+
+    <script src="../assets/js/jquery.min.js"></script>
     <style>
         .table-custom tr {
             height: 40px;
             line-height: 40px;
+        }
+
+        #ajax_preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: transparent;
+            z-index: 9999999;
         }
 
         .table-custom td,
@@ -69,6 +81,12 @@
 
     <!-- Loader -->
     <div id="preloader">
+        <div id="status">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <div id="ajax_preloader">
         <div id="status">
             <div class="spinner"></div>
         </div>
@@ -154,7 +172,7 @@
 
 
                                                             <td>
-                                                                <a href="runimport.php?idimporttemplates=<?php echo ($templateimportify->getColumnVal("idimporttemplates")); ?>">
+                                                                <a onclick="onRunImport(<?php echo ($templateimportify->getColumnVal("idimporttemplates")); ?>)">
                                                                     <button type="button" class="btn btn-danger waves-effect waves-light" data-toggle="tooltip" title="Run Import">
                                                                         <i class="fas fa-play font-size-16 align-middle"></i>
                                                                     </button>
@@ -185,6 +203,7 @@
                                                     ?></tbody>
                                             </table>
                                         </div><!--end table-responsive-->
+                                        <input id="f_csv" type="file" name="f_csv" style="display: none" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, text/csv">
                                         <script>
                                             document.addEventListener('DOMContentLoaded', function() {
                                                 const deleteButtons = document.querySelectorAll('.canc-btn');
@@ -211,8 +230,50 @@
                                                     });
                                                 });
                                             });
-                                        </script>
 
+                                            let tmp_id_template_importify = 0;
+                                            function onRunImport(id_template_importify) {
+                                                tmp_id_template_importify = id_template_importify;
+                                                $('#f_csv').trigger("click");
+                                            }
+
+                                            $('#f_csv').change(function(){
+                                                let formdata = new FormData();
+                                                if($(this).prop('files').length > 0) {
+                                                    formdata.append("f_csv", $(this).prop('files')[0]);
+                                                    formdata.append("template_id", tmp_id_template_importify);
+
+                                                    $.ajax({
+                                                        url: 'import_auto_script.php',
+                                                        type: 'POST',
+                                                        data: formdata,
+                                                        processData: false,
+                                                        contentType: false,
+                                                        beforeSend: function() {
+                                                            $('#ajax_preloader').fadeIn();
+                                                            $('#f_csv').val("");
+                                                        },
+                                                        error: function() {
+                                                            $('#ajax_preloader').fadeOut();
+                                                            showWarningAlert("Server Error");
+                                                        },
+                                                        success: function(data) {
+                                                            $('#ajax_preloader').fadeOut();
+                                                            if(data.indexOf("success") > -1) {
+                                                                showSuccessPopup("Your operation succeeded!");
+                                                            }else if(data.indexOf("none_define_column_error") > -1) {
+                                                                showWarningPopup("The Associate Columns did not define yet!");
+                                                            } else if(data.indexOf("invalid_excel_data_format_error") > -1) {
+                                                                showWarningPopup("Excel data format is not valid!")
+                                                            } else {
+                                                                showWarningAlert("Server Error.")
+                                                            }
+                                                            console.log(data);
+                                                        }
+                                                    })
+                                                }
+                                            });
+                                        </script>
                                     </div>
                                 </div>
                             </div>
@@ -236,11 +297,11 @@
     <script>
         $(document).ready(function() {
             $('[data-toggle="tooltip"]').tooltip();
+            $('#ajax_preloader').fadeOut();
         });
     </script>
 
     <!-- plugin JS  -->
-    <script src="../assets/js/jquery.min.js"></script>
     <script src="../assets/js/popper.min.js"></script>
     <script src="../assets/js/bootstrap.min.js"></script>
     <script src="../assets/js/modernizr.min.js"></script>
@@ -251,12 +312,14 @@
     <script src="../assets/js/waves.js"></script>
     <script src="../assets/js/jquery.nicescroll.js"></script>
     <script src="../assets/js/jquery.scrollTo.min.js"></script>
+    <script src="../assets/js/common_helper.js"></script>
 
     <script src="../assets/plugins/chart.js/chart.min.js"></script>
     <script src="../assets/pages/dashboard.js"></script>
 
     <!-- App js -->
     <script src="../assets/js/app.js"></script>
+    <script src="../assets/plugins/alertify/js/alertify.js"></script>
 
 
 </body>
