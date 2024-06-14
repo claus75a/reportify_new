@@ -270,7 +270,7 @@ if(isset($_FILES['f_csv'])) {
                                 }
 
                                 foreach($arr_result_project_need_idx as $q) {
-                                    $sql_result_project_query .= " and ".$q[0]."='".$q[1]."'";
+                                    $sql_result_project_query .= " and ".$q[0]."='".$result_project[$q[1]]."'";
                                 }
 
                                 $result_project_query->setQuery($sql_result_project_query);
