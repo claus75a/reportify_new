@@ -259,26 +259,26 @@ if(isset($_FILES['f_csv'])) {
                             //-----------  result_project table ------------------
                             foreach($part as $result_project) {
                                 //check exist result_project item
-                                $result_project_query = new WA_MySQLi_RS("getquery", $repnew, 0);
-                                $sql_result_project_query = "SELECT * FROM result_project WHERE idPart='$idparts' and idreports='$idreports' and idproducts='$idproducts'";
-
+//                                $result_project_query = new WA_MySQLi_RS("getquery", $repnew, 0);
+//                                $sql_result_project_query = "SELECT * FROM result_project WHERE idPart='$idparts' and idreports='$idreports' and idproducts='$idproducts'";
+//
                                 $arr_result_project_need_idx = array();
                                 for ($i = 0; $i < count($arr_associate); $i++) {
                                     if ($arr_associate[$i]['table_name'] == "result_project") {
                                         array_push($arr_result_project_need_idx, array($arr_associate[$i]['column_name'], array_search($arr_associate[$i]['headerfile'], $arr_excel_columns)));
                                     }
                                 }
-
-                                foreach($arr_result_project_need_idx as $q) {
-                                    $sql_result_project_query .= " and ".$q[0]."='".$q[1]."'";
-                                }
-
-                                $result_project_query->setQuery($sql_result_project_query);
-                                $result_project_query->execute();
-
-                                $result_project_info = $result_project_query->Results;
-
-                                if (count($result_project_info) == 0) {
+//
+//                                foreach($arr_result_project_need_idx as $q) {
+//                                    $sql_result_project_query .= " and ".$q[0]."='".$q[0]."'";
+//                                }
+//
+//                                $result_project_query->setQuery($sql_result_project_query);
+//                                $result_project_query->execute();
+//
+//                                $result_project_info = $result_project_query->Results;
+//
+//                                if (count($result_project_info) == 0) {
                                     $InsertQuery = new WA_MySQLi_Query($repnew);
                                     $InsertQuery->Action = "insert";
                                     $InsertQuery->Table = "`result_project`";
@@ -291,7 +291,7 @@ if(isset($_FILES['f_csv'])) {
                                     }
                                     $InsertQuery->saveInSession("");
                                     $InsertQuery->execute();
-                                }
+//                                }
                             }
                         }
                     }
