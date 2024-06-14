@@ -157,7 +157,7 @@
                                     <a href="<?php echo USERAREA_PATH; ?>reports/reports.php">
                                         <div class="alert alert-primary alert-dismissible fade show px-4 mb-0 text-center" role="alert">
                                             <i class="mdi mdi-cloud-sync d-block display-4 mt-2 mb-3 text-primary"></i>
-                                            <h5 class="text-primary">Reportify</h5>
+                                            <h5 class="text-primary">Reports</h5>
                                             <p class="text-primary"><?php echo $reportsslogan; ?></p>
 
                                         </div>
