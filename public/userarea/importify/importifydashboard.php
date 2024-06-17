@@ -131,7 +131,7 @@
                                         <h5 class="header-title pb-3 mt-0">Importify: <?php echo $dashboard; ?></h5>
                                         <a class="btn btn-primary" href="insert-importifytemplate.php" role="button">Insert new template</a>
                                         <a class="btn btn-success" href="rsl-category.php" role="button">Import File</a>
-                                        <a href="archiveimport.php"><button type="button" class="btn btn-info w-md waves-effect waves-light">Hystory Import</button></a>
+                                        <a href="history_importify.php"><button type="button" class="btn btn-info w-md waves-effect waves-light">Hystory Import</button></a>
                                         <a href="importifydashboard.php"><button type="button" class="btn btn-pink w-md waves-effect waves-light">Importify Dasboard</button></a>
                                         <a href="dashboard.php"><button type="button" class="btn btn-danger w-md waves-effect waves-light">Reportify Dasboard</button></a>
 
@@ -260,7 +260,7 @@
                                                         success: function(data) {
                                                             $('#ajax_preloader').fadeOut();
                                                             if(data.indexOf("success") > -1) {
-                                                                showSuccessPopup("Your operation succeeded!");
+                                                                showSuccessPopup("Your operation requested!");
                                                             }else if(data.indexOf("none_define_column_error") > -1) {
                                                                 showWarningPopup("The Associate Columns did not define yet!");
                                                             } else if(data.indexOf("invalid_excel_data_format_error") > -1) {
