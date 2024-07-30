@@ -20,8 +20,9 @@
     <link href="https://cdn.jsdelivr.net/npm/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
-
     <script src="../assets/js/jquery.min.js"></script>
+    <link rel="stylesheet" href="../assets/plugins/select2/select2.min.css">
+    <script src="../assets/plugins/select2/select2.min.js"></script>
     <style>
         .width-100 {
             width: 100%;
@@ -94,6 +95,10 @@
         .padding_none {
             padding: 0 !important;
         }
+
+        .select2-container--open {
+            z-index: 9999;
+        }
     </style>
 </head>
 
@@ -155,8 +160,6 @@
                                         <a href="history_importify.php"><button type="button" class="btn btn-info w-md waves-effect waves-light">Hystory Import</button></a>
                                         <a href="importifydashboard.php"><button type="button" class="btn btn-pink w-md waves-effect waves-light">Importify Dasboard</button></a>
                                         <a href="dashboard.php"><button type="button" class="btn btn-danger w-md waves-effect waves-light">Reportify Dasboard</button></a>
-
-
                                         <br><br>
                                         <div class="table-responsive">
                                             <table class="table table-striped table-sm sm-0">
@@ -168,11 +171,6 @@
                                                         <th><strong>File Source</strong></th>
                                                         <th><strong>Lab Name</strong></th>
                                                         <th><strong>Action</strong></th>
-
-
-
-
-
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -373,7 +371,9 @@
                                                     confirmButtonText: 'Confirm',
                                                     allowOutsideClick: false,
                                                     didOpen: () => {
-                                                        $('.swal2-popup .ipt_type').bind("click", function() {
+                                                        $('.swal2-popup .ipt_type').select2();
+                                                        $('.swal2-popup .ipt_type').unbind();
+                                                        $('.swal2-popup .ipt_type').bind("change", function() {
                                                             if($(this).val() == 0) {
                                                                 $('.div_input').removeClass("hidden");
                                                                 $('.ipt_val').val("");
@@ -387,7 +387,7 @@
                                                         $('.swal2-popup .ipt_type').trigger("change");
                                                     },
                                                 }).then((result) => {
-                                                    let type = $('.swal2-popup .ipt_type').val();
+                                                    let type = $('.swal2-popup .change').val();
                                                     let str_name = $('.swal2-popup .ipt_name').val();
                                                     let str_kind = $('.swal2-popup .ipt_kind').val();
 
@@ -462,7 +462,9 @@
                                                     confirmButtonText: 'Confirm',
                                                     allowOutsideClick: false,
                                                     didOpen: () => {
-                                                        $('.swal2-popup .ipt_type').bind("click", function() {
+                                                        $('.swal2-popup .ipt_type').select2();
+                                                        $('.swal2-popup .ipt_type').unbind();
+                                                        $('.swal2-popup .ipt_type').bind("change", function() {
                                                             if($(this).val() == 0) {
                                                                 $('.div_input').removeClass("hidden");
                                                                 $('.ipt_val').val("");
