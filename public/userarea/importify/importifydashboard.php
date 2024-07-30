@@ -372,7 +372,6 @@
                                                     allowOutsideClick: false,
                                                     didOpen: () => {
                                                         $('.swal2-popup .ipt_type').select2();
-                                                        $('.swal2-popup .ipt_type').unbind();
                                                         $('.swal2-popup .ipt_type').bind("change", function() {
                                                             if($(this).val() == 0) {
                                                                 $('.div_input').removeClass("hidden");
@@ -463,7 +462,6 @@
                                                     allowOutsideClick: false,
                                                     didOpen: () => {
                                                         $('.swal2-popup .ipt_type').select2();
-                                                        $('.swal2-popup .ipt_type').unbind();
                                                         $('.swal2-popup .ipt_type').bind("change", function() {
                                                             if($(this).val() == 0) {
                                                                 $('.div_input').removeClass("hidden");
