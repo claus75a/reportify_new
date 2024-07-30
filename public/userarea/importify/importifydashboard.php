@@ -348,10 +348,11 @@
 
                                                 let swal_html = `<div class="row">
                                                     <div class="col-md-12">
-                                                        <select class="form-control ipt_type">`;
+                                                        <select class="form-control ipt_type">
+                                                        <option value="0">Add new</option>`;
                                                 swal_html += str_arr_option;
 
-                                                swal_html += `<option value="0">Add new</option>
+                                                swal_html += `
                                                         </select>
                                                     </div>
                                                     <div class="col-md-12 flex_center div_input ` + (str_arr_option != "" ? "hidden" : "") + `" style="margin-top: 5px">
@@ -438,10 +439,11 @@
 
                                                 let swal_html = `<div class="row">
                                                     <div class="col-md-12">
-                                                        <select class="form-control ipt_type">`;
+                                                        <select class="form-control ipt_type">
+                                                            <option value="0">Add new</option>`;
                                                 swal_html += str_arr_option;
 
-                                                swal_html += `<option value="0">Add new</option>
+                                                swal_html += `
                                                         </select>
                                                     </div>
                                                     <div class="col-md-12 flex_center div_input ` + (str_arr_option != "" ? "hidden" : "") + `" style="margin-top: 5px">
