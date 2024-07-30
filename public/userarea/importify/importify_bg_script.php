@@ -216,7 +216,36 @@ foreach($arr_total_products as $product) {
                 $arr_result_project_need_idx = array();
                 for ($i = 0; $i < count($arr_associate); $i++) {
                     if ($arr_associate[$i]->table_name == "result_project") {
-                        array_push($arr_result_project_need_idx, array($arr_associate[$i]->column_name, array_search($arr_associate[$i]->headerfile, $arr_excel_columns)));
+                        if($arr_associate[$i]->column_name == "result_TestName") {
+                            $tmp_val = $result_project[array_search($arr_associate[$i]->headerfile, $arr_excel_columns)];
+                            $analysis_query = new WA_MySQLi_RS("getquery", $repnew, 0);
+                            $analysis_query->setQuery("SELECT * FROM analysisvocabulary WHERE nameanalysisvoc like '$tmp_val'");
+                            $analysis_query->execute();
+
+                            $analysis_data = $analysis_query->Results;
+                            $ref_id = 0;
+                            if(count($analysis_data) > 0) {
+                                $ref_id = $analysis_data[0]['idanalysisvocabulary'];
+                            }
+
+                            array_push($arr_result_project_need_idx, array($arr_associate[$i]->column_name, $ref_id, 1));
+                        } else if($arr_associate[$i]->column_name == "result_AnalytsName") {
+                            $tmp_val = $result_project[array_search($arr_associate[$i]->headerfile, $arr_excel_columns)];
+
+                            $analysis_query = new WA_MySQLi_RS("getquery", $repnew, 0);
+                            $analysis_query->setQuery("SELECT * FROM compundsvocabulary WHERE namecompoundsvocabulary like '$tmp_val' or cascompoundvocabulary like '$tmp_val'");
+                            $analysis_query->execute();
+
+                            $analysis_data = $analysis_query->Results;
+                            $ref_id = 0;
+                            if(count($analysis_data) > 0) {
+                                $ref_id = $analysis_data[0]['idcompoundsvocabulary'];
+                            }
+
+                            array_push($arr_result_project_need_idx, array($arr_associate[$i]->column_name, $ref_id, 1));
+                        } else {
+                            array_push($arr_result_project_need_idx, array($arr_associate[$i]->column_name, array_search($arr_associate[$i]->headerfile, $arr_excel_columns), 0));
+                        }
                     }
                 }
 //
@@ -238,7 +267,11 @@ foreach($arr_total_products as $product) {
                 $InsertQuery->bindColumn("idreports", "i", "" . $idreports . "", "WA_DEFAULT");
                 $InsertQuery->bindColumn("importcode", "i", "" . $importcode . "", "WA_DEFAULT");
                 for ($i = 0; $i < count($arr_result_project_need_idx); $i++) {
-                    $InsertQuery->bindColumn($arr_result_project_need_idx[$i][0], "s", $result_project[$arr_result_project_need_idx[$i][1]], "WA_DEFAULT");
+                    if($arr_result_project_need_idx[$i][2] > 0) {
+                        $InsertQuery->bindColumn($arr_result_project_need_idx[$i][0], "s", $arr_result_project_need_idx[$i][1], "WA_DEFAULT");
+                    } else {
+                        $InsertQuery->bindColumn($arr_result_project_need_idx[$i][0], "s", $result_project[$arr_result_project_need_idx[$i][1]], "WA_DEFAULT");
+                    }
                 }
                 $InsertQuery->saveInSession("");
                 $InsertQuery->execute();

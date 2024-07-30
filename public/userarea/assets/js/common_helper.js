@@ -10,6 +10,10 @@ function showWarningAlert(str) {
     alertify.logPosition("top right").error("<i class='ion-alert-circled'><i> " + str + "");
 }
 
+function showSuccessAlert(str) {
+    alertify.logPosition("top right").success("<i class='ion-alert-circled'><i> " + str + "");
+}
+
 function showWarningPopup(str, callback = null, confirm_str = "Confirm") {
     Swal.fire({
         title: 'Warning!',
