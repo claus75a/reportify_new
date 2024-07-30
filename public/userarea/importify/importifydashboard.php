@@ -387,7 +387,7 @@
                                                         $('.swal2-popup .ipt_type').trigger("change");
                                                     },
                                                 }).then((result) => {
-                                                    let type = $('.swal2-popup .change').val();
+                                                    let type = $('.swal2-popup .ipt_type').val();
                                                     let str_name = $('.swal2-popup .ipt_name').val();
                                                     let str_kind = $('.swal2-popup .ipt_kind').val();
 
