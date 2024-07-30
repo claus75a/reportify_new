@@ -64,7 +64,7 @@ if(isset($_FILES['f_csv'])) {
 
                     foreach($arr_diff_anaysisvoc_words as $item) {
                         $arr_analysis_refdata = new WA_MySQLi_RS("rsl", $repnew, 0);
-                        $trim_item = str_replace("'", "\'", $item);
+                        $trim_item = str_replace("\n", "", str_replace("'", "\'", $item));
                         $arr_analysis_refdata->setQuery("SELECT * FROM analysisvocabulary where nameanalysisvoc like '$trim_item'");
                         $arr_analysis_refdata->execute();
                         $arr_analysis_ref = $arr_analysis_refdata->Results;
@@ -103,7 +103,7 @@ if(isset($_FILES['f_csv'])) {
                     foreach($arr_diff_compundsvoc_words as $item) {
                         $arr_compunds_refdata = new WA_MySQLi_RS("rsl", $repnew, 0);
                         $compund_word = $item['word'];
-                        $trim_item = str_replace("'", "\'", $compund_word);
+                        $trim_item = str_replace("\n", "", str_replace("'", "\'", $compund_word));
                         $arr_compunds_refdata->setQuery("SELECT * FROM compundsvocabulary where namecompoundsvocabulary like '$trim_item' or cascompoundvocabulary like '$trim_item'");
                         $arr_compunds_refdata->execute();
                         $arr_compunds_ref = $arr_compunds_refdata->Results;

@@ -218,8 +218,9 @@ foreach($arr_total_products as $product) {
                     if ($arr_associate[$i]->table_name == "result_project") {
                         if($arr_associate[$i]->column_name == "result_TestName") {
                             $tmp_val = $result_project[array_search($arr_associate[$i]->headerfile, $arr_excel_columns)];
+                            $trim_item = str_replace("\n", "", str_replace("'", "\'", $tmp_val));
                             $analysis_query = new WA_MySQLi_RS("getquery", $repnew, 0);
-                            $analysis_query->setQuery("SELECT * FROM analysisvocabulary WHERE nameanalysisvoc like '$tmp_val'");
+                            $analysis_query->setQuery("SELECT * FROM analysisvocabulary WHERE nameanalysisvoc like '$trim_item'");
                             $analysis_query->execute();
 
                             $analysis_data = $analysis_query->Results;
@@ -231,7 +232,7 @@ foreach($arr_total_products as $product) {
                             array_push($arr_result_project_need_idx, array($arr_associate[$i]->column_name, $ref_id, 1));
                         } else if($arr_associate[$i]->column_name == "result_AnalytsName") {
                             $tmp_val = $result_project[array_search($arr_associate[$i]->headerfile, $arr_excel_columns)];
-
+                            $trim_item = str_replace("\n", "", str_replace("'", "\'", $tmp_val));
                             $analysis_query = new WA_MySQLi_RS("getquery", $repnew, 0);
                             $analysis_query->setQuery("SELECT * FROM compundsvocabulary WHERE namecompoundsvocabulary like '$tmp_val' or cascompoundvocabulary like '$tmp_val'");
                             $analysis_query->execute();
