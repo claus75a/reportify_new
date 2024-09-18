@@ -1,101 +1,248 @@
-
-
 <?php
-if(isset($analytsname)) {
-// fecth trend
+// queries creation
+$mainquery = "select * from reports left join products ON reports.idreports=products.idreports";
+$failqueryvar = " AND LOWER(reports.reportsRating) = 'fail'";
+$passqueryvar = " AND reports.reportsRating='PASS'";
+$dataqueryvar = " AND reports.reportsRating='//'";
 
- // $worstanalysis = "select result_project.idAnalysis AS analysisid, result_TestName, name_analysis , COUNT(*) as counter from result_project LEFT JOIN reports ON result_project.idreports=reports.idreports LEFT JOIN analysis ON result_project.idAnalysis=analysis.idanalysis WHERE reports.idcompany='$idcompany' AND result_project.result_Rating='F' GROUP BY result_TestName ORDER by counter DESC LIMIT 10";
+// var on off
+if (isset($_SESSION['datefiltermin'])) {
+    $datequeryvar = " AND reports.reportsDateOut BETWEEN '$datefiltermin' AND '$datefiltermax'";
+} else {
+    $datequeryvar = "";
+};
+if (isset($_SESSION['supplierfilter'])) {
+    $supplierqueryvar = " AND products.namesupplier IN ('$supplierf')";
+} else {
+    $supplierqueryvar = "";
+};
+//print_r($_SESSION['supplierfilter']);
+?>
+<?php
+
+// fetch failed reports
+$sqlfail = "select * from reports WHERE LOWER(reports.reportsRating) = 'fail'";
+$reportfail = mysqli_query($repnew, $sqlfail) or die("Error in Selecting " . mysqli_error($repnew));
+$num_rows_fail = mysqli_num_rows($reportfail);
+
+// fetch data reports
+$sqldata = $mainquery . $dataqueryvar . $supplierqueryvar . $datequeryvar;
+$reportdata = mysqli_query($repnew, $sqldata) or die("Error in Selecting " . mysqli_error($repnew));
+$num_rows_data = mysqli_num_rows($reportdata);
 
 
-    $paramscheck = "SELECT * FROM result_project LEFT JOIN reports ON result_project.idreports=reports.idreports
-WHERE reports.iduser='$iduserlog' AND result_project.result_AnalytsName = '$analytsname' 
-ORDER BY reports.reportDateIn
-LIMIT 100;
+//fetch table rows from mysql db
+//echo $mainquery.$supplierqueryvar.$datequeryvar;
+$sql = $mainquery . $supplierqueryvar . $datequeryvar;
+
+$result = mysqli_query($repnew, $sql) or die("Error in Selecting " . mysqli_error($repnew));
+$num_rows = mysqli_num_rows($result);
+
+//fetch table rows from analysis
+$sqlanalysis = "select * from result_project LEFT JOIN reports ON result_project.idreports=reports.idreports GROUP BY result_project.idPart, reports.reportsNumberLab  ";
+$resultanalysis = mysqli_query($repnew, $sqlanalysis) or die("Error in Selecting " . mysqli_error($repnew));
+$num_rows_analysis = mysqli_num_rows($resultanalysis);
+
+//fetch table rows from analysis fail
+$sqlanalysisfail = "
+    SELECT COUNT(DISTINCT result_project.idPart, reports.reportsNumberLab) AS total_rows
+    FROM result_project
+    LEFT JOIN reports ON result_project.idreports = reports.idreports
+    WHERE result_project.result_Rating = 'FAIL'
 ";
 
-    $resultparamscheck = mysqli_query($predoc, $paramscheck) or die("Error in Selecting " . mysqli_error($predoc));
+$resultanalysisfail = mysqli_query($repnew, $sqlanalysisfail) or die("Error in Selecting " . mysqli_error($repnew));
+
+// Fetch the result
+$row = mysqli_fetch_assoc($resultanalysisfail);
+$num_rows_analysis_fail = $row['total_rows'];
+if ($num_rows_analysis > 0) {
+    $percanalysisfail = round(($num_rows_analysis_fail / $num_rows_analysis) * 100, 1);
+} else {
+    $percanalysisfail = 0; // Oppure un altro valore di default
+}
+
+//create an array
+
+if (!function_exists('replaceSmartQuotes')) {
+    function replaceSmartQuotes($string)
+    {
+        $search = array(chr(145), chr(146), chr(147), chr(148), chr(151));
+        $replace = array("'", "'", '"', '"', '-');
+        return str_replace($search, $replace, $string);
+    }
+}
+
+if (!function_exists('replaceSmartQuotesInArray')) {
+    function replaceSmartQuotesInArray($array)
+    {
+        foreach ($array as $key => $value) {
+            if (is_string($value)) {
+                $array[$key] = replaceSmartQuotes($value);
+            } elseif (is_array($value)) {
+                $array[$key] = replaceSmartQuotesInArray($value);
+            }
+        }
+        return $array;
+    }
+}
+
+$reportsarray = array();
+while ($row = mysqli_fetch_assoc($result)) {
+    $reportsarray[] = replaceSmartQuotesInArray($row);
+}
+//$totalreport=
+if ((!empty($num_rows)) && (!empty($num_rows_fail))) {
+    $perfail = round(($num_rows_fail / $num_rows) * 100, 1);
+}
+if ((!empty($num_rows)) && (!empty($num_rows_data))) {
+    $perdata = round(($num_rows_data / $num_rows) * 100, 1);
+}
+if ((!empty($num_rows)) && (isset($num_rows_fail)) && (!empty($num_rows_data))) {
+    $numpassres = ($num_rows - $num_rows_data - $num_rows_fail);
+}
+if ((!empty($perfail)) && (!empty($perdata))) {
+    $perpass = round(100 - $perfail - $perdata, 1);
+}
+
+?>
+<?php
+// fecth data of top 10 worst analysis
+
+// $worstanalysis = "select result_project.idAnalysis AS analysisid, result_TestName, name_analysis , COUNT(*) as counter from result_project LEFT JOIN reports ON result_project.idreports=reports.idreports LEFT JOIN analysis ON result_project.idAnalysis=analysis.idanalysis WHERE reports.idcompany='$idcompany' AND result_project.result_Rating='F' GROUP BY result_TestName ORDER by counter DESC LIMIT 10";
+
+
+$worstanalysis = "SELECT result_TestName, COUNT(*) AS counter 
+FROM result_project 
+LEFT JOIN reports ON result_project.idreports = reports.idreports 
+WHERE result_project.result_Rating = 'FAIL' 
+GROUP BY result_TestName 
+ORDER BY counter DESC 
+LIMIT 10;
+";
+$resultworstanalysis = mysqli_query($repnew, $worstanalysis) or die("Error in Selecting " . mysqli_error($repnew));
+
+
 
 
 // Print out result
-$dateparamcheck=array();
-$valueparamcheck=array();
-while($row = mysqli_fetch_array($resultparamscheck)) {  
-    $dateparamcheck[]=$row['reportDateIn'];
-    $valueparamcheck[]=$row['result_Value'];
-
+$ncounter = array();
+$testname = array();
+while ($row = mysqli_fetch_array($resultworstanalysis)) {
+    $ncounter[] = $row['counter'];
+    $testname[] = replaceSmartQuotes($row['result_TestName']);
 }
 
 
 ?>
 <?php
+// fecth data of failed analysis
 
-// Assumi che $dateparamcheck e $valueparamcheck siano già popolati con i dati pertinenti
-
-// Converte le date in timestamp per la regressione
-$timestampcheck = array();
-foreach ($dateparamcheck as $date) {
-    $timestampcheck[] = strtotime($date);
-}
-
-// Calcola la media dei valori (y) e dei timestamp (x)
-$mean_x = array_sum($timestampcheck) / count($timestampcheck);
-$mean_y = array_sum($valueparamcheck) / count($valueparamcheck);
-
-// Calcola la regressione lineare
-$numerator = 0;
-$denominator = 0;
-for ($i = 0; $i < count($timestampcheck); $i++) {
-    $numerator += ($timestampcheck[$i] - $mean_x) * ($valueparamcheck[$i] - $mean_y);
-    $denominator += ($timestampcheck[$i] - $mean_x) ** 2;
-}
-
-// Coefficienti della regressione lineare y = mx + b
-$m = $numerator / $denominator;
-$b = $mean_y - ($m * $mean_x);
-
-// Stampa i valori previsti per i prossimi 6 mesi
-$last_date_timestamp = end($timestampcheck);
-for ($j = 1; $j <= 6; $j++) {
-    $next_month_timestamp = strtotime("+{$j} month", $last_date_timestamp);
-    $predicted_value = $m * $next_month_timestamp + $b;
-  
-}
+// $worstanalysis = "select result_project.idAnalysis AS analysisid, result_TestName, name_analysis , COUNT(*) as counter from result_project LEFT JOIN reports ON result_project.idreports=reports.idreports LEFT JOIN analysis ON result_project.idAnalysis=analysis.idanalysis WHERE reports.idcompany='$idcompany' AND result_project.result_Rating='F' GROUP BY result_TestName ORDER by counter DESC LIMIT 10";
 
 
-// Array per tenere traccia delle previsioni
-$predicted_dates = [];
-$predicted_values = [];
+$failedanalysis = "SELECT result_TestName, COUNT(*) AS counter 
+FROM result_project 
+LEFT JOIN reports ON result_project.idreports = reports.idreports 
+WHERE result_project.result_Rating = 'FAIL' 
+GROUP BY result_TestName 
+ORDER BY counter DESC 
+LIMIT 50;
+";
+$resultfailedanalysis = mysqli_query($repnew, $failedanalysis) or die("Error in Selecting " . mysqli_error($repnew));
 
-$last_date_timestamp = end($timestampcheck);
-for ($j = 1; $j <= 6; $j++) {
-    $next_month_timestamp = strtotime("+{$j} month", $last_date_timestamp);
-    $predicted_value = $m * $next_month_timestamp + $b;
-    
-      // Formatta il valore previsto con lo stesso numero di decimali dei dati reali
-    $formatted_predicted_value = number_format($predicted_value, 2);
-    
-    $predicted_dates[] = date('Y-m-d', $next_month_timestamp);
-    $predicted_values[] = $formatted_predicted_value;
-	   
+
+// Print out result
+$ncounterfailed = array();
+$testnamefailed = array();
+while ($row = mysqli_fetch_array($resultfailedanalysis)) {
+    $ncounterfailed[] = $row['counter'];
+    $testnamefailed[] = replaceSmartQuotes($row['result_TestName']);
 }
 
 
 ?>
 <?php
-// fecth limit
+// fecth failed components
 
- // $worstanalysis = "select result_project.idAnalysis AS analysisid, result_TestName, name_analysis , COUNT(*) as counter from result_project LEFT JOIN reports ON result_project.idreports=reports.idreports LEFT JOIN analysis ON result_project.idAnalysis=analysis.idanalysis WHERE reports.idcompany='$idcompany' AND result_project.result_Rating='F' GROUP BY result_TestName ORDER by counter DESC LIMIT 10";
-  
-$paramslim = "SELECT * FROM parameterslimit WHERE parameterslimit.nameparameters = '$analytsname' LIMIT 1;";
-$resultparamslim = mysqli_query($predoc, $paramslim) or die("Error in Selecting " . mysqli_error($predoc));
+// $worstanalysis = "select result_project.idAnalysis AS analysisid, result_TestName, name_analysis , COUNT(*) as counter from result_project LEFT JOIN reports ON result_project.idreports=reports.idreports LEFT JOIN analysis ON result_project.idAnalysis=analysis.idanalysis WHERE reports.idcompany='$idcompany' AND result_project.result_Rating='F' GROUP BY result_TestName ORDER by counter DESC LIMIT 10";
 
-$lowlim = null;
-$highlim = null;
-if ($row = mysqli_fetch_assoc($resultparamslim)) {
-    $lowlim = floatval($row['lowvalue']);
-$highlim = floatval($row['highvalue']);
 
+$failedanalyts = "SELECT result_AnalytsName, COUNT(*) AS counter 
+FROM result_project 
+LEFT JOIN reports ON result_project.idreports = reports.idreports 
+WHERE result_project.result_AnalytsRating = 'F' 
+GROUP BY result_AnalytsName 
+ORDER BY counter DESC 
+LIMIT 100;
+";
+$resultfailedanalyts = mysqli_query($repnew, $failedanalyts) or die("Error in Selecting " . mysqli_error($repnew));
+
+
+// Print out result
+$ncounterfailedanalyts = array();
+$testnamefailedanalyts = array();
+while ($row = mysqli_fetch_array($resultfailedanalyts)) {
+    $ncounterfailedanalyts[] = $row['counter'];
+    $testnamefailedanalyts[] = $row['result_AnalytsName'];
 }
 
+
+?>
+<?php
+// fecth worst supplier
+
+// $worstanalysis = "select result_project.idAnalysis AS analysisid, result_TestName, name_analysis , COUNT(*) as counter from result_project LEFT JOIN reports ON result_project.idreports=reports.idreports LEFT JOIN analysis ON result_project.idAnalysis=analysis.idanalysis WHERE reports.idcompany='$idcompany' AND result_project.result_Rating='F' GROUP BY result_TestName ORDER by counter DESC LIMIT 10";
+
+
+$worstsupplier = "SELECT namesupplier, COUNT(*) AS counter 
+FROM result_project 
+LEFT JOIN reports ON result_project.idreports = reports.idreports 
+LEFT JOIN products ON result_project.idproducts = products.idproducts 
+WHERE LOWER(result_project.result_Rating) = 'fail' 
+GROUP BY namesupplier 
+ORDER BY counter DESC 
+LIMIT 10;
+";
+
+$resultworstsupplier = mysqli_query($repnew, $worstsupplier) or die("Error in Selecting " . mysqli_error($repnew));
+
+
+// Print out result
+$ncounterworstsupplier = array();
+$testnameworstsupplier = array();
+while ($row = mysqli_fetch_array($resultworstsupplier)) {
+    $ncounterworstsupplier[] = $row['counter'];
+    $testnameworstsupplier[] = $row['namesupplier'];
 }
+
+
+?>
+<?php
+// fecth region area
+
+// $worstanalysis = "select result_project.idAnalysis AS analysisid, result_TestName, name_analysis , COUNT(*) as counter from result_project LEFT JOIN reports ON result_project.idreports=reports.idreports LEFT JOIN analysis ON result_project.idAnalysis=analysis.idanalysis WHERE reports.idcompany='$idcompany' AND result_project.result_Rating='F' GROUP BY result_TestName ORDER by counter DESC LIMIT 10";
+
+
+$worstregion = "SELECT products_region, COUNT(*) AS counter 
+FROM result_project 
+LEFT JOIN reports ON result_project.idreports = reports.idreports 
+LEFT JOIN products ON result_project.idreports = products.idreports 
+WHERE result_project.result_Rating = 'FAIL' 
+GROUP BY namesupplier 
+ORDER BY counter DESC 
+LIMIT 10;
+";
+$resultworstregion = mysqli_query($repnew, $worstregion) or die("Error in Selecting " . mysqli_error($repnew));
+
+
+// Print out result
+$ncounterregion = array();
+$nameregion = array();
+while ($row = mysqli_fetch_array($resultworstregion)) {
+    $ncounterregion[] = $row['counter'];
+    $nameregion[] = $row['products_region'];
+}
+
+
 ?>

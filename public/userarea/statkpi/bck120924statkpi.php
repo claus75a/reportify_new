@@ -27,10 +27,6 @@ include('parsedatachart.php');
 
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/4.2.6/gridstack.min.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/4.2.6/gridstack-h5.min.js"></script>
-
-
     <style>
         .width-100 {
             width: 100%;
@@ -184,16 +180,6 @@ include('parsedatachart.php');
                 max-width: 100%;
             }
         }
-
-        .filters-applied {
-            display: inline-block;
-            background-color: #3368ff;
-            color: white;
-            border-radius: 5px;
-            padding: 5px 10px;
-            font-weight: bold;
-            margin-top: 10px;
-        }
     </style>
 
 </head>
@@ -242,44 +228,13 @@ include('parsedatachart.php');
                         </div>
                         <!-- end page title end breadcrumb -->
 
-
-
                         <div class="row">
                             <div class="col-xl-12">
                                 <div class="card">
                                     <div class="card-body">
                                         <h5 class="header-title pb-3 mt-0">Importify: <?php echo $dashboard; ?></h5>
 
-                                        <!-- Filter Section -->
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <label for="startDate">Start Date</label>
-                                                <input type="date" id="startDate" class="form-control" placeholder="Start Date">
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label for="endDate">End Date</label>
-                                                <input type="date" id="endDate" class="form-control" placeholder="End Date">
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label for="supplierFilter">Supplier</label>
-                                                <select id="supplierFilter" class="form-control select2">
-                                                    <option value="">All Suppliers</option>
-                                                    <?php foreach ($productBySupplier as $supplier): ?>
-                                                        <option value="<?php echo $supplier['supplier']; ?>"><?php echo $supplier['supplier']; ?></option>
-                                                    <?php endforeach; ?>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <hr>
-                                        <!-- Active Filters Display -->
-                                        <div id="activeFilters" class="mt-3" style="display: none;">
-                                            <h6>Active Filters:</h6>
-                                            <div id="filterDisplay" class="filters-applied badge badge-info p-2" style="font-size: 16px;"></div>
-                                            <button id="clearFilters" class="btn btn-sm btn-warning ml-3">Clear Filters</button>
-                                        </div>
 
-
-                                        <hr>
                                     </div>
                                 </div>
                             </div>
@@ -403,79 +358,6 @@ include('parsedatachart.php');
 
     </div>
     <!-- END wrapper -->
-    <script>
-        $(document).ready(function() {
-            // Inizializza Select2 per il filtro supplier
-            $('#supplierFilter').select2({
-                placeholder: 'Select a supplier',
-                allowClear: true
-            });
-
-            // Funzione per aggiornare i dati con AJAX
-            function updateData() {
-                var startDate = $('#startDate').val();
-                var endDate = $('#endDate').val();
-                var supplier = $('#supplierFilter').val();
-
-                $.ajax({
-                    url: 'parsedatachart.php',
-                    method: 'POST',
-                    data: {
-                        startDate: startDate,
-                        endDate: endDate,
-                        supplier: supplier
-                    },
-                    success: function(response) {
-                        // Assicurati di fare il parsing della risposta JSON
-                        var data = JSON.parse(response);
-
-                        // Aggiorna le cards con i nuovi dati
-                        $('#totalProducts').text(data.totalProducts);
-                        $('#totalReports').text(data.totalReports);
-                        $('#failedReports').text(data.failedReports);
-                        $('#failedReportsPercent').text('(' + data.failedReportsPercent.toFixed(2) + '%)');
-                        $('#totalTests').text(data.totalTests);
-                        $('#failedTests').text(data.failedTests);
-                        $('#failedTestsPercent').text('(' + data.failedTestsPercent.toFixed(2) + '%)');
-
-                        // Aggiorna il grafico dei report (Pie Chart)
-                        chart.updateSeries([data.failReportsPie, data.passReportsPie, data.otherReportsPie]);
-
-                        // Mostra i filtri attivi
-                        var filterText = '';
-                        if (startDate && endDate) {
-                            filterText += 'Date: ' + startDate + ' to ' + endDate + ' ';
-                        }
-                        if (supplier) {
-                            filterText += 'Supplier: ' + $('#supplierFilter option:selected').text();
-                        }
-                        $('#filterDisplay').text(filterText);
-                        $('#activeFilters').show();
-                    },
-                    error: function() {
-                        alert('Error retrieving data.');
-                    }
-                });
-            }
-
-            // Eventi per applicare i filtri
-            $('#startDate, #endDate, #supplierFilter').on('change', function() {
-                updateData();
-            });
-
-            // Clear filters
-            $('#clearFilters').on('click', function() {
-                $('#startDate').val('');
-                $('#endDate').val('');
-                $('#supplierFilter').val('').trigger('change');
-                updateData();
-                $('#activeFilters').hide();
-            });
-
-            // Chiamata iniziale per caricare i dati alla prima visualizzazione della pagina
-            updateData();
-        });
-    </script>
 
     <script>
         document.getElementById('totalProducts').innerText = <?php echo $totalProducts; ?>;
